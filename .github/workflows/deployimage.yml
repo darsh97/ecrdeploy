@@ -1,0 +1,16 @@
+name: Deploy CFN stack
+
+on:
+  workflow_dispatch:
+      
+jobs:     
+  deploystack:
+    runs-on: ubuntu-latest
+    steps:
+    - name: PR checkout
+      uses: actions/checkout@v2
+      
+    - name: setup python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
