@@ -1,0 +1,4 @@
+{
+  "s3_source_bucket": "reqpayertest",
+  "s3_destination_bucket": "reqpayertest"
+}

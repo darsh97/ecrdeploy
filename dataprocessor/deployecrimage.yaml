@@ -1,0 +1,31 @@
+name: Deploy image
+
+on:
+  workflow_dispatch:
+      
+jobs:     
+  deploystack:
+    runs-on: ubuntu-latest
+    steps:
+    - name: PR checkout
+      uses: actions/checkout@v2
+      
+    - name: setup python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+
+    
