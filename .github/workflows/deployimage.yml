@@ -28,4 +28,17 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
 
+    - name: Build, tag, and push docker image to Amazon ECR
+      working-directory: ./dataprocessor/
+      env:
+        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        REPOSITORY: pocrepo
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+        docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
     
+    - name: Log out of ECR
+      if: always()
+      run: docker logout {{ steps.login-ecr.outputs.registry }}
