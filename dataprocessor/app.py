@@ -15,6 +15,7 @@ def main():
     Traverse the downloaded datafiles, parse them and push the xlsx output to destionation bucket.
     """
     for data_file in data_files:
+        if not data_file.endswith(".xml"): continue
         print(f"parsing {data_file}")
         data_file_df: pandas.DataFrame = parse(data_file)
         print(f"parsed {data_file}!\n")
