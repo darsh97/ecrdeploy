@@ -1,0 +1,26 @@
+LINKS regarding ppt_cmd_poc:
+
+	Changing attributes of a specefic word
+		=> https://stackoverflow.com/questions/58361320/how-to-change-specific-words-font-color-of-pptx-file
+		=> Substantially complicated algorithm.
+		
+		
+	Multiple run object:
+		=> https://stackoverflow.com/questions/59032019/python-pptx-part-of-text-in-cell-with-different-color
+		
+
+	Extracting Images =>
+		https://stackoverflow.com/questions/52491656/extracting-images-from-presentation-file
+		
+
+	Structural similarity Index =>
+		https://www.pyimagesearch.com/2017/06/19/image-difference-with-opencv-and-python/
+		
+		https://abndistro.com/post/2019/07/07/detecting-image-differences-using-python-and-opencv/
+		
+Image Processing Part:
+	
+	1) Frequency Filter:
+		* Frequency filters process an image in the frequency domain. The image is Fourier transformed, multiplied with the filter function and then re-transformed into the spatial domain
+		
+		
