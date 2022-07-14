@@ -1,0 +1,4 @@
+{
+  "s3_source_bucket": "medrxiv-src-monthly",
+  "s3_destination_bucket": "reqpayertest"
+}
