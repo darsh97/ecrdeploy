@@ -29,7 +29,7 @@ jobs:
 
 
     - name: Build, tag, and push docker image to Amazon ECR
-      working-directory: ./dataprocessor/
+      working-directory: ./medbioprocessor/
       env:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         REPOSITORY: pocrepo
