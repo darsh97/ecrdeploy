@@ -1,97 +1,40 @@
-import timeit
+import pandas
 
-import boto3
-import boto3
+from datapuller import fetch_and_download
+from dataparser import parse
+from constants import s3_SOURCE_BUCKET, s3_DESTINATION_BUCKET, DATASTORE_PATH
+from typing import List, Dict
+from helper import upload_file
+from botocore.exceptions import ClientError
+
 import os
-
-from typing import List
-from botocore.client import ClientError
-
-from constants import DATASTORE_PATH, s3_SOURCE_BUCKET
-from helper import file_age_in_days
-
-s3 = boto3.resource('s3')
-
-s3_client = boto3.client('s3')
+import time
+import pandas as pd
 
 
-def _s3_get_all_objects_pagination(bucket, prefix, requester_pays=False):
-    """Get s3 objects from a bucket/prefix
-    optionally use requester-pays header
-    """
+def main():
+    data_files: List[str] = fetch_and_download(s3_SOURCE_BUCKET, day_limit=2, requester_pay=True)
+    parsed_data_files: List[Dict] = [*map(parse, data_files)]
 
-    batch: int = 0
+    print("Converted Parsed-files to dataframe!\n")
+    data_df = pd.DataFrame(parsed_data_files)
 
-    extra_kwargs = {}
-    if requester_pays:
-        extra_kwargs = {'RequestPayer': 'requester'}
+    xlsx_file_name: str = f"biomedrxiv_{str(int(time.time()))}.xlsx"
+    local_destination_path: str = os.path.join(DATASTORE_PATH, xlsx_file_name)
 
-    next_token = 'init'
+    print(f"Converting and saving xlsx to {local_destination_path}")
+    data_df.to_excel(local_destination_path)
 
-    while next_token is not None:
-        kwargs = extra_kwargs.copy()
-        if next_token != 'init':
-            kwargs.update({'ContinuationToken': next_token})
-
-        resp = s3_client.list_objects_v2(
-            Bucket=bucket, Prefix=prefix, **kwargs)
-
-        print(f"Fetched batch: {batch}.")
-
-        try:
-            next_token = resp['NextContinuationToken']
-        except KeyError:
-            next_token = None
-
-        for contents in resp['Contents']:
-            yield contents
-
-        batch += 1
+    try:
+        print(f"Uploading {xlsx_file_name} to {s3_DESTINATION_BUCKET}!")
+        if os.path.isfile(local_destination_path):
+            upload_response = upload_file(local_destination_path, s3_DESTINATION_BUCKET, xlsx_file_name)
+            print(f"Uploaded {xlsx_file_name} to {s3_DESTINATION_BUCKET}!")
+        else:
+            print(f"Invalid Path {local_destination_path}")
+    except ClientError as e:
+        print(f"Err {e}")
 
 
-def _s3_get_latest_files(bucket_objects, day_limit: int) -> List:
-    """
-    Retain objects when their last_modified happened less than day_limit days ago.
-    """
-
-    latest_object: List = []
-    for bo in bucket_objects:
-
-        if file_age_in_days(bo.get("LastModified")) <= day_limit:
-            latest_object.append(bo)
-
-    return latest_object
-
-
-def _s3_download_object_to_local(latest_bucket_objects, download_location: str, requester_pay=False) -> List[str]:
-    file_locations: List[str] = []
-
-    for bo in latest_bucket_objects:
-        bo_key = bo.get("Key")
-        s3_file_path, s3_file_name = os.path.split(bo_key)
-        print(f"Processing {bo_key}!")
-        if not s3_file_name: continue
-
-        local_file_location = os.path.join(download_location, s3_file_name)
-
-        try:
-            print(f"downloading file {s3_file_name}")
-            s3_client.download_file(s3_SOURCE_BUCKET, bo_key, local_file_location,
-                                    {"RequestPayer": "requester"} if requester_pay else {})
-
-            print(f"saving file {s3_file_name} to {local_file_location}\n")
-            file_locations.append(local_file_location)
-
-        except ClientError as err:
-            print(f"Error downloading - {bo_key}, err: {err}")
-
-    return file_locations
-
-
-def fetch_and_download(bucket: str, day_limit: int, requester_pay: bool = False) -> List[str]:
-    all_files = _s3_get_all_objects_pagination(bucket=bucket,
-                                               prefix='',
-                                               requester_pays=requester_pay)
-
-    latest_files = _s3_get_latest_files(all_files, day_limit=day_limit)
-    return _s3_download_object_to_local(latest_files, DATASTORE_PATH, requester_pay=requester_pay)
+if __name__ == '__main__':
+    main()
