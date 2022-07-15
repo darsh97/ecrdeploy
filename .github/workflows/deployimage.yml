@@ -37,8 +37,3 @@ jobs:
       run: |
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-
-    
-    - name: Log out of ECR
-      if: always()
-      run: docker logout {{ steps.login-ecr.outputs.registry }}
