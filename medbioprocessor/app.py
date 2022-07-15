@@ -27,10 +27,11 @@ def main():
 
     try:
         print(f"Uploading {xlsx_file_name} to {s3_DESTINATION_BUCKET}!")
-        upload_response = upload_file(local_destination_path, s3_DESTINATION_BUCKET, xlsx_file_name)
-        print(f"Uploaded {xlsx_file_name} to {s3_DESTINATION_BUCKET}!")
-        return upload_response
-
+        if os.path.isfile(local_destination_path):
+            upload_response = upload_file(local_destination_path, s3_DESTINATION_BUCKET, xlsx_file_name)
+            print(f"Uploaded {xlsx_file_name} to {s3_DESTINATION_BUCKET}!")
+        else:
+            print(f"Invalid Path {local_destination_path}")
     except ClientError as e:
         print(f"Err {e}")
 
