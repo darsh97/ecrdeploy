@@ -13,7 +13,7 @@ import pandas as pd
 
 
 def main():
-    data_files: List[str] = fetch_and_download(s3_SOURCE_BUCKET, day_limit=2, requester_pay=True)
+    data_files: List[str] = fetch_and_download(s3_SOURCE_BUCKET, day_limit=30, requester_pay=True)
     parsed_data_files: List[Dict] = [parse(f) for f in data_files if os.path.isfile(f)]
 
     print("Converted Parsed-files to dataframe!\n")
