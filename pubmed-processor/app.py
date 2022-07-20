@@ -16,6 +16,8 @@ def main():
     
     fetch_from_ftp_to_local: bool = ftp_puller()
     
+    print("Download Complete")
+    print(f"{len(os.listdir(storage_folder))}" number of files in {storage_folder})
 
     for data_file in os.listdir(storage_folder):
 
