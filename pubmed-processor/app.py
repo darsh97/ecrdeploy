@@ -26,13 +26,14 @@ def main():
             article_data = []
 
             data_file_local_path: str = os.path.join(storage_folder, data_file)
-            print(f"Processing {data_file}")
+            print(f"Processing {data_file}", flush=True)
 
             try:
                 print(f"Extracting {data_file}", flush=True)
-
-                with gzip.open(data_file_local_path, "r") as _zip:
-                    _xml = bs(_zip.read(), "lxml")
+                _zip = gzip.open(data_file_local_path, "r")
+                print(f"Extracted {data_file}", flush=True)
+                
+                _xml = bs(_zip.read(), "lxml")
 
                 print(f"Parsing {data_file}", flush=True)
 
