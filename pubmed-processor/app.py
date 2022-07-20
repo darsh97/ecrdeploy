@@ -37,7 +37,7 @@ def main():
             try:
                 print(f"Extracting {data_file}", flush=True)
                 _zip = gzip.open(data_file_local_path, "r")
-                print(f"Extracted {data_file}")
+                print(f"Extracted {data_file}", flush=True)
                 
                 _xml = bs(_zip.read(), "lxml")
 
