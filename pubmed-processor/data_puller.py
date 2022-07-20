@@ -18,7 +18,6 @@ def ftp_puller(_type: str = "weekly"):
     bash_command_wget = 'wget -r -np -nH --cut-dirs=50 -A "' + file_pattern + '" -P ' + storage_folder + ' ' + ftp_url
     try:
         check_call(bash_command_wget, shell=True)
-        return True
     except Exception as e:
         print("Exception occured while downloading files from the server.")
         raise e
