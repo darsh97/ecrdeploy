@@ -44,7 +44,7 @@ jobs:
       env:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         REPOSITORY: pocrepo
-        IMAGE_TAG: pubmed-processor-image-${{ github.sha }}
+        IMAGE_TAG: pubmed-new-processor-image-${{ github.sha }}
       run: |
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
