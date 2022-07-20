@@ -12,8 +12,8 @@ from helper import upload_file
 
 
 def main():
-    # fetch_from_ftp_to_local: bool = ftp_puller()
-    # assert bool(fetch_from_ftp_to_local)
+    fetch_from_ftp_to_local: bool = ftp_puller()
+    
 
     for data_file in os.listdir(storage_folder):
 
