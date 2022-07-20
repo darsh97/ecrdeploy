@@ -64,8 +64,5 @@ def main():
             except Exception as err:
                 print(f"{data_file}: {err}")
 
-        return
-
-
 if __name__ == '__main__':
     main()
