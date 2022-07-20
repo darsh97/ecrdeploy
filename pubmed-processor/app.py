@@ -12,12 +12,12 @@ from helper import upload_file
 
 
 def main():
-    print("Starting to fetch data")
+    print("Starting to fetch data", flush=True)
     
     fetch_from_ftp_to_local: bool = ftp_puller()
     
-    print("Download Complete\n")
-    print(os.listdir(storage_folder))
+    print("Download Complete\n", flush=True)
+    print(os.listdir(storage_folder), flush=True)
 
     for data_file in os.listdir(storage_folder):
 
