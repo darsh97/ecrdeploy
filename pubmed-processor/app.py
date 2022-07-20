@@ -10,6 +10,8 @@ from constants import storage_folder, s3_destination_bucket
 
 from helper import upload_file
 
+from random import shuffle
+
 
 def main():
     print("Starting to fetch data", flush=True)
@@ -18,8 +20,12 @@ def main():
     
     print("Download Complete\n", flush=True)
     print(os.listdir(storage_folder), flush=True)
-
-    for data_file in os.listdir(storage_folder):
+    
+    downloaded_files = os.listdir(storage_folder)
+    
+    shuffle(downloaded_files)
+    
+    for data_file in downloaded_files:
 
         if data_file.endswith(".gz"):
 
@@ -31,7 +37,7 @@ def main():
             try:
                 print(f"Extracting {data_file}", flush=True)
                 _zip = gzip.open(data_file_local_path, "r")
-                print(f"Extracted {data_file}", flush=True)
+                print(f"Extracted {data_file}")
                 
                 _xml = bs(_zip.read(), "lxml")
 
