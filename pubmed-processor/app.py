@@ -12,6 +12,8 @@ from helper import upload_file
 
 
 def main():
+    print("Starting to fetch data")
+    
     fetch_from_ftp_to_local: bool = ftp_puller()
     
 
