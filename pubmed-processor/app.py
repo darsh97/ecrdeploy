@@ -29,17 +29,17 @@ def main():
             print(f"Processing {data_file}")
 
             try:
-                print(f"Extracting {data_file}")
+                print(f"Extracting {data_file}", flush=True)
 
                 with gzip.open(data_file_local_path, "r") as _zip:
                     _xml = bs(_zip.read(), "lxml")
 
-                print(f"Parsing {data_file}")
+                print(f"Parsing {data_file}", flush=True)
 
                 for article in _xml.findAll("pubmedarticle"):
                     article_data.append(parse_article(article))
 
-                print(f"Converting {data_file} to Dataframe!")
+                print(f"Converting {data_file} to Dataframe!", flush=True)
                 article_df = pd.DataFrame(article_data)
 
                 xlsx_file_name: str = data_file.split(".")[0] + ".xlsx"
@@ -48,19 +48,19 @@ def main():
                 xlsx_local_file_path: str = os.path.join(storage_folder, xlsx_file_name)
                 pkl_local_file_path: str = os.path.join(storage_folder, pkl_file_name)
 
-                print(f"Converting {data_file}_dataframe to Pickle: {pkl_local_file_path}")
+                print(f"Converting {data_file}_dataframe to Pickle: {pkl_local_file_path}", flush=True)
                 article_df.to_pickle(pkl_local_file_path)
 
-                print(f"Converting {data_file}_dataframe to Excel: {xlsx_local_file_path}")
+                print(f"Converting {data_file}_dataframe to Excel: {xlsx_local_file_path}", flush=True)
                 article_df.to_excel(xlsx_local_file_path)
 
                 if os.path.isfile(pkl_local_file_path):
                     upload_response = upload_file(pkl_local_file_path, s3_destination_bucket, pkl_file_name)
-                    print(f"Uploaded {pkl_file_name} to {s3_destination_bucket}")
+                    print(f"Uploaded {pkl_file_name} to {s3_destination_bucket}", flush=True)
 
                 if os.path.isfile(xlsx_local_file_path):
                     upload_response = upload_file(xlsx_local_file_path, s3_destination_bucket, xlsx_file_name)
-                    print(f"Uploaded {xlsx_file_name} to {s3_destination_bucket}")
+                    print(f"Uploaded {xlsx_file_name} to {s3_destination_bucket}", flush=True)
 
 
             except Exception as err:
