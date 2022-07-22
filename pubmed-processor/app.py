@@ -17,7 +17,7 @@ from random import shuffle
 def main():
     print("Starting to fetch data", flush=True)
 
-    # fetch_from_ftp_to_local: bool = ftp_puller()
+    fetch_from_ftp_to_local: bool = ftp_puller()
     total: int = 0
     processed: int = 0
     failed_files = []
