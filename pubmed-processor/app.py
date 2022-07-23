@@ -30,12 +30,10 @@ def main():
     print("Download Complete\n", flush=True)
     print(os.listdir(storage_folder), flush=True)
 
-    downloaded_files = os.listdir(storage_folder)
-    shuffle(downloaded_files)
-
+    downloaded_files = {f for f in os.listdir(storage_folder) if f.endswith(".gz")}
     # Get the list of processed_files from s3
-
     local_processed_file_log = os.path.join(storage_folder, processed_file_log)
+
     try:
         response = s3_client.download_file(s3_destination_bucket, processed_file_log, local_processed_file_log)
     except ClientError as e:
@@ -43,9 +41,12 @@ def main():
         raise e
 
     processed_files: Set[str] = set(line.strip() for line in open(local_processed_file_log))
+
     print(f"Already processed files {processed_files}", flush=True)
 
     files_to_process: Set[str] = set(downloaded_files) - processed_files
+
+    print(f"files left: {len(files_to_process)}", flush=True)
 
     for data_file in files_to_process:
         if data_file.endswith(".gz"):
@@ -57,17 +58,17 @@ def main():
 
             try:
                 print(f"Extracting {data_file}", flush=True)
-                _zip = gzip.open(data_file_local_path, "r")
+                # _zip = gzip.open(data_file_local_path, "r")
                 print(f"Extracted {data_file}, converting to beautifulsoup", flush=True)
 
-                _xml = bs(_zip.read(), "lxml")
+                # _xml = bs(_zip.read(), "lxml")
 
-                _zip.close()
+                # _zip.close()
 
                 print(f"Parsing {data_file}", flush=True)
 
-                for article in _xml.findAll("pubmedarticle"):
-                    article_data.append(parse_article(article))
+                # for article in _xml.findAll("pubmedarticle"):
+                #   article_data.append(parse_article(article))
 
                 print(f"Converting {data_file} to Dataframe!", flush=True)
                 article_df = pd.DataFrame(article_data)
@@ -91,14 +92,14 @@ def main():
                     print(f"Uploaded {pkl_file_name} to {s3_destination_bucket}", flush=True)
                     uploaded_pkl = True
 
-                    with open(local_processed_file_log, 'w') as processed_log:
+                    with open(local_processed_file_log, 'a') as processed_log:
                         processed_log.write(f"{data_file}\n")
 
-                        try:
-                            upload_file(local_processed_file_log, s3_destination_bucket, processed_file_log)
-                            print(f"Uploaded {processed_log} to {s3_destination_bucket}", flush=True)
-                        except ClientError as e:
-                            print(f"Failed to upload logfile: {e}", flush=True)
+                    try:
+                        upload_file(local_processed_file_log, s3_destination_bucket, processed_file_log)
+                        print(f"Uploaded {processed_file_log} to {s3_destination_bucket}", flush=True)
+                    except ClientError as e:
+                        print(f"Failed to upload logfile: {e}", flush=True)
 
                     processed_successfully += 1
 
@@ -122,7 +123,7 @@ def main():
 
         log_file_local_path = os.path.join(storage_folder, "failed_text_logs.txt")
 
-        with open(log_file_local_path, 'w') as f:
+        with open(log_file_local_path, 'a') as f:
             for file_name in failed_files:
                 f.write(f"{file_name}\n")
 
