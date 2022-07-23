@@ -1,36 +1,51 @@
 import gzip
 import os
+from typing import Set
+
 import pandas as pd
+import boto3
 
 from bs4 import BeautifulSoup as bs
 
 from data_puller import ftp_puller, is_file_age_lt_x_months
 from data_parser import parse_article
-from constants import storage_folder, s3_destination_bucket
+from constants import storage_folder, s3_destination_bucket, processed_file_log
 
 from helper import upload_file
 from botocore.exceptions import ClientError
 
 from random import shuffle
 
+s3_client = boto3.client('s3')
+
 
 def main():
     print("Starting to fetch data", flush=True)
 
-    fetch_from_ftp_to_local: bool = ftp_puller()
+    # fetch_from_ftp_to_local: bool = ftp_puller()
     total: int = 0
-    processed: int = 0
+    processed_successfully: int = 0
     failed_files = []
 
     print("Download Complete\n", flush=True)
     print(os.listdir(storage_folder), flush=True)
 
     downloaded_files = os.listdir(storage_folder)
-
     shuffle(downloaded_files)
 
-    for data_file in downloaded_files:
+    # Get the list of processed_files from s3
 
+    local_processed_file_log = os.path.join(storage_folder, processed_file_log)
+    try:
+        response = s3_client.download_file(s3_destination_bucket, processed_successfully, local_processed_file_log)
+    except ClientError as e:
+        print("Could not load processed_files_log", flush=True)
+        raise e
+
+    processed_files: Set[str] = set(line.strip() for line in open(local_processed_file_log))
+    files_to_process: Set[str] = set(downloaded_files) - processed_files
+
+    for data_file in files_to_process:
         if data_file.endswith(".gz"):
 
             article_data = []
@@ -44,6 +59,8 @@ def main():
                 print(f"Extracted {data_file}, converting to beautifulsoup", flush=True)
 
                 _xml = bs(_zip.read(), "lxml")
+
+                _zip.close()
 
                 print(f"Parsing {data_file}", flush=True)
 
@@ -71,7 +88,17 @@ def main():
                     upload_response = upload_file(pkl_local_file_path, s3_destination_bucket, pkl_file_name)
                     print(f"Uploaded {pkl_file_name} to {s3_destination_bucket}", flush=True)
                     uploaded_pkl = True
-                    processed += 1
+
+                    with open(local_processed_file_log, 'w') as processed_log:
+                        processed_log.write(f"{data_file}\n")
+
+                        try:
+                            upload_file(local_processed_file_log, s3_destination_bucket, processed_file_log)
+                            print(f"Uploaded {processed_log} to {s3_destination_bucket}", flush=True)
+                        except ClientError as e:
+                            print(f"Failed to upload logfile: {e}", flush=True)
+
+                    processed_successfully += 1
 
                 if os.path.isfile(xlsx_local_file_path):
                     upload_response = upload_file(xlsx_local_file_path, s3_destination_bucket, xlsx_file_name)
@@ -103,7 +130,9 @@ def main():
         except ClientError as e:
             print(f"Failed to upload logfile: {e}", flush=True)
 
-        print(f"Completed Processing! total: {total}, processed: {processed}, failed: {total - processed}", flush=True)
+        print(
+            f"Completed Processing! total: {total}, processed_successfully: {processed_successfully}, failed: {total - processed_successfully}",
+            flush=True)
 
 
 if __name__ == '__main__':
