@@ -58,19 +58,20 @@ def main():
 
             try:
                 print(f"Extracting {data_file}", flush=True)
-                # _zip = gzip.open(data_file_local_path, "r")
+                _zip = gzip.open(data_file_local_path, "r")
                 print(f"Extracted {data_file}, converting to beautifulsoup", flush=True)
 
-                # _xml = bs(_zip.read(), "lxml")
+                _xml = bs(_zip.read(), "lxml")
 
-                # _zip.close()
+                _zip.close()
 
                 print(f"Parsing {data_file}", flush=True)
 
-                # for article in _xml.findAll("pubmedarticle"):
-                #   article_data.append(parse_article(article))
+                for article in _xml.findAll("pubmedarticle"):
+                    article_data.append(parse_article(article))
 
                 print(f"Converting {data_file} to Dataframe!", flush=True)
+                
                 article_df = pd.DataFrame(article_data)
 
                 xlsx_file_name: str = data_file.split(".")[0] + ".xlsx"
