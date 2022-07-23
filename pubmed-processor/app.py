@@ -37,7 +37,7 @@ def main():
 
     local_processed_file_log = os.path.join(storage_folder, processed_file_log)
     try:
-        response = s3_client.download_file(s3_destination_bucket, processed_successfully, local_processed_file_log)
+        response = s3_client.download_file(s3_destination_bucket, processed_file_log, local_processed_file_log)
     except ClientError as e:
         print("Could not load processed_files_log", flush=True)
         raise e
