@@ -22,7 +22,7 @@ s3_client = boto3.client('s3')
 def main():
     print("Starting to fetch data", flush=True)
 
-    # fetch_from_ftp_to_local: bool = ftp_puller()
+    fetch_from_ftp_to_local: bool = ftp_puller()
     total: int = 0
     processed_successfully: int = 0
     failed_files = []
