@@ -43,6 +43,8 @@ def main():
         raise e
 
     processed_files: Set[str] = set(line.strip() for line in open(local_processed_file_log))
+    print(f"Already processed files {processed_files}", flush=True)
+
     files_to_process: Set[str] = set(downloaded_files) - processed_files
 
     for data_file in files_to_process:
