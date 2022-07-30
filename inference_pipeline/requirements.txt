@@ -1,0 +1,30 @@
+# Run pip install --upgrade pip
+tensorflow==2.6.0
+torch==1.9.0
+torchvision==0.10.0
+torchaudio==0.9.0
+# absl-py==0.11.0
+pandas==1.1.1
+scikit-learn==0.23.1
+#dataclasses==0.8
+# filelock==3.0.12
+# future==0.18.2
+# grpcio==1.39.0
+# h5py==3.1.0
+# joblib==1.0.1
+keras==2.6.0
+numpy==1.19.5
+# protobuf==3.13.0
+# sacremoses==0.0.43
+scipy==1.4.1
+# sentencepiece==0.1.91
+tensorboard==2.6.0
+# tokenizers==0.9.3
+tqdm==4.59.0
+# transformers==3.5.1
+transformers==4.13.0
+# typing-extensions==3.7.4.3
+boto3
+s3fs
+pytest==6.2.5
+smart_open==5.2.1
