@@ -528,7 +528,7 @@ class RankingDLModel(IMPSAModel):
                 my_prefix = "/".join(s3_input_list[1:])
                 if not my_prefix.endswith("/"): my_prefix += "/"
                 s3_client = aws_utils.S3Client()
-                model_key_list = s3_client.list_objects(bucket=my_bucket, prefix=my_prefix)
+                model_key_list = s3_client.list_objects(bucket=my_bucket)
                 models_list = ["s3://{}/{}".format(my_bucket, x) for x in model_key_list]
                 models_list = [x for x in models_list if x.lower().endswith(".pt")]
 
