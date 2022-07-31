@@ -40,11 +40,11 @@ jobs:
         
         
     - name: Build, tag, and push docker image to Amazon ECR
-      working-directory: ./pubmed-processor/
+      working-directory: ./inference_pipeline/
       env:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         REPOSITORY: pocrepo
-        IMAGE_TAG: pubmed-new-processor-image-${{ github.sha }}
+        IMAGE_TAG: ml-inf-image-${{ github.sha }}
       run: |
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
