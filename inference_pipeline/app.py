@@ -44,7 +44,7 @@ def predict_handler(event, context):
     if "trained_model_path" in event.keys():
         biobert_models_path = event["trained_model_path"]
     else:
-        biobert_models_path = "models/"
+        biobert_models_path = "s3://codebucket234/"
     # model_name = event['model_name'] if "model_name" in event.keys() else "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext"
     model_name = "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext"
     batch_size = 16
