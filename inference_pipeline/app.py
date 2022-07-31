@@ -69,7 +69,7 @@ def predict_handler(event, context):
             "predict_file": predict_file
         }
 
-        # ret = model.predict(**predict_params_dict)
+        ret = model.predict(**predict_params_dict)
 
     if os.path.isfile(predict_file):
         # predict file created, print contents out
