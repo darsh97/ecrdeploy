@@ -18,10 +18,6 @@ import timeit
 import os
 import requests
 
-creds_uri = os.environ.get('AWS_CONTAINER_CREDENTIALS_RELATIVE_URI')
-r = requests.get('http://169.254.170.2{}'.format(creds_uri))
-print(r.text, flush=True)
-print(r.json(), flush=True)
 
 
 def timer(f):
